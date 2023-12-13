@@ -1,0 +1,69 @@
+#.bashrc
+
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+	tmux new-session -A -s default
+fi
+################### SHELL CONFIG ##############################
+if [ $SHLVL -eq 1 ]; then
+	PS1='\[[1;97m\][\u\[[5m\]@\[[25m\]\h \W]\$ \[[22;0m\]'
+elif [ -n "$TMUX" ] && [ $SHLVL -eq 2 ]; then
+	PS1='\[[1;97m\][\u\[[5m\]@\[[25m\]\h \W]\$ \[[22;0m\]'
+else
+	num=$(( 29 + $SHLVL )); if [ -n "$TMUX" ]; then num=$(( $num + 59 )); fi
+	PS1='\[\033[01;$(echo $num)m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+fi
+if [ -n "$SSH_TTY" ]; then
+	pre="\[\e[1;100m\]"
+	PS1="$pre$PS1"
+fi
+PS2='\[\e[32m\]> |\[\e[m\] '
+shopt -s checkwinsize
+HISTCONTROL=ignoredups
+HISTSSIZE=150
+HISTFILESIZE=10000
+shopt -s histappend
+HISTTIMEFORMAT="[32m%F [92m%T [0m	"
+
+################## ALIAS:- PRIMARY #################################
+alias ls='ls --color=auto --hyperlink'
+alias grep='grep --color=auto'
+alias tmux='tmux -u'
+
+################# ALIAS:- SECONDARY ################################
+alias ..='cd ..;pwd'
+alias ...='cd ../..;pwd'
+alias ....='cd ../../..;pwd'
+alias ,='show'
+alias ,,='tree -al'
+alias !='$EDITOR'
+alias @='open_in_editor'
+
+################## CUSTOM FUNCTIONS ##################################
+#tree but less cool
+show(){
+	local dir="$1"
+	cd "$dir" && \
+	ls -Al 
+}
+
+open_in_editor(){
+	$* > ~/intrim && ! ~/intrim
+}
+:q(){
+		cp ~/Repo.wiki ~/Repo_back
+		cp ~/Repo.wiki ~/Repo_temp
+		history | awk '{$1=$2=$3=""; gsub(/^[ \t]+.\[0m[ \t]+/,""); print}' | sort | uniq >> ~/Repo_temp
+		cat ~/Repo_temp | sort | uniq > ~/Repo.wiki
+		rm ~/Repo_temp
+		[[ "$1" != "-x" ]] && exit
+}
+
+:w(){
+	local query=$*
+	grep -e $(echo $query | sed 's/ / -e /' )  ~/Repo | more
+}
+
+############NEEDED I GUESS############################################
+export EDITOR="/bin/vim"
+export PATH="$PATH:$HOME/script"
+alias text='setfont ter-powerline-v20b.psf.gz'
