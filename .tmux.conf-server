@@ -1,0 +1,62 @@
+# TMUX CONFIGS
+# Complete Customisation Tree at Prefix+C
+
+# Setting PREFIX key
+unbind C-b
+set-option -g prefix C-s
+bind-key C-s send-prefix
+
+# Setting GENERAL APPEARANCE
+ %if #{TMUX}
+		setw -g status-bg white
+		setw -g status-fg black
+		setw -g status 5
+	setw -g window-status-style bg=white
+ %endif
+
+# Setting STATUSLINE BEHAVIOURS
+set -g display-panes-active-colour "#5D52E6"
+set -g message-style 'fg=black bg=#ffc300'
+set -g pane-active-border-style fg=#5D52E6
+set -g pane-border-format " #{pane_index} #{pane_current_command }   "
+set -g pane-border-indicators both
+set -g pane-border-lines heavy
+set -g pane-border-status bottom
+set -g pane-border-style fg=#000000
+set -g status-left ' #U@#H '
+set -g status-left-style 'bg=#df5877 fg=#000000 bold'
+set -g status-right "🕑 %Y/%m/%d|%H:%M:%S"
+set -g status-right-style 'bg=#0FA83C fg=#000000 bold'
+set -g window-status-current-style 'bg=#3B3A45 bold' 
+set -g window-status-style 'fg=#EDEDF4'
+set-option -g status-interval 1
+set-option -g status-justify centre
+set-option -g status-left-length 60
+set-option -g status-right-length 50
+set-option -g window-status-separator ' | '
+
+# Setting Keyboard CUSTOMISATIONS
+bind | split-window -h
+bind - split-window -v
+unbind '"'
+unbind %
+
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+bind C-c copy-mode
+bind C-v paste-buffer  -p
+
+bind r source-file ~/.tmux.conf \; display-message " CONFIG LOADED "
+
+# Setting operational Preferences
+set -g mouse on
+set -g base-index 1
+set -g escape-time 20
+set -g default-terminal "screen-256color"
+set-window-option -g mode-keys vi
+set -g clock-mode-style 24
+set -g clock-mode-colour "#ffc300"
+setw -g monitor-activity on
